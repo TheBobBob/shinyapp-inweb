@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Volcano Plot</title>
+    <link rel="stylesheet" href="styles.css">  <!-- Link to your CSS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
+    <script src="script.js" defer></script>  <!-- Link to your JS -->
+</head>
+<body>
+    <header>
+        <h1>Interactive Volcano Plot with Gene and GO Term Search</h1>
+    </header>
+    <main>
+        <div id="password-section">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button id="submit_password">Submit</button>
+        </div>
+        <div id="main-ui" style="display: none;">
+            <h2>Data Analysis</h2>
+            <input type="file" id="fileInput" accept=".xlsx">
+            <button id="analyze_button">Analyze</button>
+            <hr>
+            <input type="text" id="gene_search" placeholder="Search for a gene or keyword">
+            <button id="search_gene">Search Gene</button>
+            <hr>
+            <select id="GO_search"></select>
+            <button id="search_GO_term">Search GO Term</button>
+            <hr>
+            <select id="description_search"></select>
+            <button id="search_description">Search Description</button>
+            <p id="analysis_status"></p>
+            <div id="volcanoPlot"></div>
+        </div>
+    </main>
+</body>
+</html>
