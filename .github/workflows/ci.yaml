@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  shiny_app:
+    build:
+      context: .  # Current directory
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
+    ports:
+      - "3838:3838"  # Map port 3838 of the container to port 3838 of the host
+    environment:
+      - R_ENV=production  # You can set environment variables here if needed
+    volumes:
+      - .:/srv/shiny-server  # Mount the current directory to the container
