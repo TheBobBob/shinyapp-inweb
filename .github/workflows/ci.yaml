@@ -1,13 +1,31 @@
-version: '3.8'
+name: Build and Deploy R Backend
 
-services:
-  shiny_app:
-    build:
-      context: .  # Current directory
-      dockerfile: Dockerfile  # Specify the Dockerfile to use
-    ports:
-      - "3838:3838"  # Map port 3838 of the container to port 3838 of the host
-    environment:
-      - R_ENV=production  # You can set environment variables here if needed
-    volumes:
-      - .:/srv/shiny-server  # Mount the current directory to the container
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          Rscript -e "install.packages(c('shiny', 'dplyr', 'ggplot2'), repos='http://cran.rstudio.com/')"
+
+      - name: Build Docker image
+        run: |
+          docker build -t your-image-name .
+
+      - name: Push Docker image
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker tag your-image-name your-dockerhub-username/your-image-name
+          docker push your-dockerhub-username/your-image-name
+
