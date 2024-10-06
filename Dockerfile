@@ -1,22 +1,25 @@
-# Use the official R image as the base image
-FROM rocker/shiny:latest
+# Start with the official R Shiny image
+FROM rocker/shiny:4.0.3
 
-# Install system dependencies
+# Install system dependencies (if needed)
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
-    libxml2-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    libxml2-dev
 
-# Install R packages
-RUN R -e "install.packages(c('shiny', 'ggplot2', 'plotly', 'clusterProfiler', 'readxl', 'tidyverse', 'DESeq2', 'biomaRt', 'future', 'tidyr', 'shinyjs', 'org.Hs.eg.db'), repos='http://cran.rstudio.com/')"
+# Install R packages (add more as needed)
+RUN R -e "install.packages(c('shiny', 'plumber', 'plotly', 'ggplot2', 'readxl', 'DESeq2', 'org.Hs.eg.db', 'clusterProfiler', 'shinyjs'), repos='https://cran.rstudio.com/')"
 
-# Copy the Shiny app files into the image
-COPY . /srv/shiny-server/
+# Expose the port for Shiny and Plumber API
+EXPOSE 8080 8000
 
-# Expose port 3838 for the Shiny app
-EXPOSE 3838
+# Set environment variable for Shiny to run on port 8080
+ENV PORT=8080
 
-# Run the Shiny app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server')"]
+# Copy the Plumber and Shiny files
+COPY ./app.R /srv/shiny-server/
+COPY ./plumber.R /srv/plumber/
+
+# Run the Shiny app and Plumber API on separate ports
+CMD R -e "shiny::runApp('/srv/shiny-server/app.R', port=8080, host='0.0.0.0')" & R -e "plumber::plumb('/srv/plumber/plumber.R')$run(port=8000, host='0.0.0.0')"
+
